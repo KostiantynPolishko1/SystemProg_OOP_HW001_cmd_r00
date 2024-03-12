@@ -44,7 +44,7 @@ namespace SystemProg_OOP_HW001_cmd_r00
 
             //ShowListApp(Process.GetProcesses().ToList());
 
-            HashSet<(string, int)> tmp = GetNamesPriorities(Process.GetProcesses().ToList());
+/*            HashSet<(string, int)> tmp = GetNamesPriorities(Process.GetProcesses().ToList());
             ShowListApp(tmp, 7);
 
             HashSet<(string, int)> GetNamesPriorities(in List<Process> processs)
@@ -56,6 +56,72 @@ namespace SystemProg_OOP_HW001_cmd_r00
                 }
 
                 return NamesPriorities;
+            }*/
+
+/*            SortedSet<string> _listApp = GetNamesApp(Process.GetProcesses().ToList());
+            ShowListApp2(_listApp);*/
+
+            List<Process> listAppByName = Process.GetProcessesByName("Calculator").ToList();
+
+            foreach(Process process in listAppByName)
+            {
+                Console.WriteLine($"{process.ProcessName} - {process.Id}");
+
+                (bool flag, string Msg) = CloseApp(Process.GetProcessById(process.Id));
+                if (!flag)
+                {
+                    Console.WriteLine(Msg);
+                }
+            }
+
+            (bool, string) CloseApp(in Process App)
+            {
+                try
+                {
+                    for(int i = 0; i < 5; i++)
+                    {
+                        if (!App.HasExited)
+                        {
+                            App.Refresh();
+                            Thread.Sleep(2000);
+                        }
+                        else { break; }
+                    }
+                    
+                    App.CloseMainWindow();
+                    App.Close();
+
+                    return (true, string.Empty);
+                }
+                catch(InvalidOperationException ex)
+                { 
+                    return (false, $"{App.ProcessName} is already terminated");
+                }
+                catch(Exception ex)
+                {
+                    return (false, $"{App.ProcessName} is failed");
+                }
+            }
+
+            SortedSet<string> GetNamesApp(in List<Process> processes)
+            {
+                SortedSet<string> listApp = new SortedSet<string>();
+                foreach (Process p in processes)
+                {
+                    listApp.Add(p.ProcessName);
+                }
+
+                return listApp;
+            }
+
+            bool IsNameApp(in string nameApp, SortedSet<string> _listApp)
+            {
+                foreach (string app in _listApp)
+                {
+                    if (app == nameApp) { return true; }
+                }
+
+                return false;
             }
 
             void ShowListApp(in HashSet<(string, int)> process, int index = 0)
@@ -67,6 +133,15 @@ namespace SystemProg_OOP_HW001_cmd_r00
                     {
                         Console.WriteLine($"{i += 1}. {item.name} - {item.priority}");
                     }
+                }
+            }
+
+            void ShowListApp2(in SortedSet<string> _listApp)
+            {
+                int i = 0;
+                foreach (string name in _listApp)
+                {
+                    Console.WriteLine($"{i += 1}. {name}");
                 }
             }
 
