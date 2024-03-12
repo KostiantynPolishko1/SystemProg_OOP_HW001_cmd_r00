@@ -6,6 +6,8 @@ namespace SystemProg_OOP_HW001_cmd_r00
     {
         static void Main(string[] args)
         {
+            //=====Varification if App is presented among process launched=====//
+
             /*            try
                         {
                             Console.Write("\tname of App: ");
@@ -40,28 +42,18 @@ namespace SystemProg_OOP_HW001_cmd_r00
                             ShowMsgExp(MyEx.Message);
                         }*/
 
-
-
-            //ShowListApp(Process.GetProcesses().ToList());
+            //=====Show App with BasePriority > 7=====//
 
 /*            HashSet<(string, int)> tmp = GetNamesPriorities(Process.GetProcesses().ToList());
-            ShowListApp(tmp, 7);
+            ShowListAppNamePriority(tmp, 7);
+*/
 
-            HashSet<(string, int)> GetNamesPriorities(in List<Process> processs)
-            {
-                HashSet<(string, int)> NamesPriorities = new HashSet<(string, int)>() { };
-                foreach (Process p in processs)
-                {
-                    NamesPriorities.Add((p.ProcessName, p.BasePriority));
-                }
+            //=====Close All chrome App=====//
 
-                return NamesPriorities;
-            }*/
+/*          SortedSet<string> _listApp = GetNamesApp(Process.GetProcesses().ToList());
+            ShowListAppName(_listApp);
 
-/*            SortedSet<string> _listApp = GetNamesApp(Process.GetProcesses().ToList());
-            ShowListApp2(_listApp);*/
-
-            List<Process> listAppByName = Process.GetProcessesByName("Calculator").ToList();
+            List<Process> listAppByName = Process.GetProcessesByName("chrome").ToList();
 
             foreach(Process process in listAppByName)
             {
@@ -72,7 +64,41 @@ namespace SystemProg_OOP_HW001_cmd_r00
                 {
                     Console.WriteLine(Msg);
                 }
-            }
+            }*/
+
+            //=====Close App by ID inputed=====//
+
+            /*SortedSet<string> _listApp = GetNamesApp(Process.GetProcesses().ToList());
+            ShowListAppName(_listApp);
+
+            Console.Write("\tApp name to close -> ");
+            string nameApp = Console.ReadLine();
+            ShowListAppNameId(Process.GetProcessesByName(nameApp).ToList());
+
+            Console.Write("\tApp Id to close -> ");
+            bool flag = int.TryParse(Console.ReadLine(), out int AppId);
+
+            if (flag)
+            {
+                try
+                {
+                    (bool flag2, string Msg) = CloseApp(Process.GetProcessById(AppId));
+
+                    if(!flag2)
+                    {
+                        throw new Exception(Msg);
+                    }
+
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine("The identifier might be expired.");
+                }
+                catch (Exception MyEx)
+                {
+                    Console.WriteLine(MyEx);
+                }
+            }*/
 
             (bool, string) CloseApp(in Process App)
             {
@@ -124,7 +150,7 @@ namespace SystemProg_OOP_HW001_cmd_r00
                 return false;
             }
 
-            void ShowListApp(in HashSet<(string, int)> process, int index = 0)
+            void ShowListAppNamePriority(in HashSet<(string, int)> process, int index = 0)
             {
                 int i = 0;
                 foreach ((string name, int priority) item in process)
@@ -136,7 +162,7 @@ namespace SystemProg_OOP_HW001_cmd_r00
                 }
             }
 
-            void ShowListApp2(in SortedSet<string> _listApp)
+            void ShowListAppName(in SortedSet<string> _listApp)
             {
                 int i = 0;
                 foreach (string name in _listApp)
@@ -145,9 +171,32 @@ namespace SystemProg_OOP_HW001_cmd_r00
                 }
             }
 
+            void ShowListAppNameId(in List<Process> listApp)
+            {
+                foreach(Process p in listApp)
+                {
+                    if (!p.HasExited)
+                    {
+                        Console.WriteLine($"{p.ProcessName} - {p.Id}");
+                    }
+                }
+            }
+
+
             void ShowMsgExp(in string msg)
             {
                 Console.WriteLine($"\tError!\n\t{msg}");
+            }
+
+            HashSet<(string, int)> GetNamesPriorities(in List<Process> processs)
+            {
+                HashSet<(string, int)> NamesPriorities = new HashSet<(string, int)>() { };
+                foreach (Process p in processs)
+                {
+                    NamesPriorities.Add((p.ProcessName, p.BasePriority));
+                }
+
+                return NamesPriorities;
             }
 
             void StatusApp((bool flag, string appName) process)
